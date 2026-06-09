@@ -68,28 +68,12 @@ function tokenize(text) {
   return tokens;
 }
 
-// Convert token array to PUA-indexed map for diff-match-patch word diff.
-// Returns { chars: string of PUA chars, tokenArray: string[], charMap: object }
-function tokensToChars(tokens) {
-  var charMap = {};
-  var tokenArray = [];
-  var chars = '';
-  for (var i = 0; i < tokens.length; i++) {
-    var token = tokens[i];
-    if (!(token in charMap)) {
-      // Use PUA+private range above F8FF to avoid collision with diff-match-patch internals
-      var code = 0xF900 + tokenArray.length;
-      if (code > 0xFFFD) {
-        // Fallback: use supplementary PUA U+100000+
-        code = 0x100000 + (tokenArray.length - (0xFFFD - 0xF900 + 1));
-      }
-      charMap[token] = String.fromCharCode(code > 0xFFFF ? 0xFFFD : code);
-      tokenArray.push(token);
-    }
-    chars += charMap[token];
-  }
-  return { chars: chars, tokenArray: tokenArray };
-}
+// Token encoding base — Latin Extended-A (U+0100). Safe for internal use since:
+// - The encoded strings are never displayed or compared to user text
+// - Avoids U+E000–U+F8FF (stripped from user input, reserving that range for diff-match-patch)
+// - 54,783 slots (U+0100 to U+D7FF) handles documents with large unique-token counts
+var TOKEN_BASE = 0x0100;
+var TOKEN_MAX  = 0xD7FF; // Before surrogate range
 
 // Main word-level diff function.
 // Returns array of [op, text] pairs where op is DIFF_DELETE, DIFF_INSERT, or DIFF_EQUAL.
@@ -100,52 +84,32 @@ function wordLevelDiff(original, revised) {
   var origTokens = tokenize(original);
   var revTokens = tokenize(revised);
 
-  var origMapped = tokensToChars(origTokens);
-  var revMapped = tokensToChars(revTokens);
-
-  // Build combined token array
-  var allTokens = origMapped.tokenArray.slice();
-  var revArray = revMapped.tokenArray;
-  var revCharMap = {};
-  var revChars = '';
-  for (var i = 0; i < revTokens.length; i++) {
-    var token = revTokens[i];
-    if (!(token in revCharMap)) {
-      var existing = origMapped.tokenArray.indexOf(token);
-      if (existing >= 0) {
-        revCharMap[token] = origMapped.chars[origTokens.indexOf(token)] || origMapped.tokenArray[existing];
-      }
-    }
-  }
-
-  // Use dmp.diff_wordsToChars equivalent: manual mapping
-  var origChars = origMapped.chars;
-  var allTokenArr = origMapped.tokenArray;
-
-  // Build rev chars using same map where possible, extend where not
+  var allTokenArr = [];
   var tokenToChar = {};
-  for (var j = 0; j < allTokenArr.length; j++) {
-    tokenToChar[allTokenArr[j]] = String.fromCharCode(0xF900 + j);
-  }
 
-  var revCharsStr = '';
-  for (var k = 0; k < revTokens.length; k++) {
-    var t = revTokens[k];
-    if (!(t in tokenToChar)) {
-      tokenToChar[t] = String.fromCharCode(0xF900 + allTokenArr.length);
-      allTokenArr.push(t);
+  function encodeToken(token) {
+    if (!(token in tokenToChar)) {
+      var idx = allTokenArr.length;
+      var code = TOKEN_BASE + idx;
+      if (code > TOKEN_MAX) {
+        // Overflow: more unique tokens than encoding slots — wrap and reuse.
+        // Reduces diff quality on very large diverse docs, but never crashes.
+        code = TOKEN_BASE + (idx % (TOKEN_MAX - TOKEN_BASE + 1));
+      }
+      tokenToChar[token] = String.fromCharCode(code);
+      allTokenArr.push(token);
     }
-    revCharsStr += tokenToChar[t];
+    return tokenToChar[token];
   }
 
   var origCharsStr = '';
-  for (var m = 0; m < origTokens.length; m++) {
-    var ot = origTokens[m];
-    if (!(ot in tokenToChar)) {
-      tokenToChar[ot] = String.fromCharCode(0xF900 + allTokenArr.length);
-      allTokenArr.push(ot);
-    }
-    origCharsStr += tokenToChar[ot];
+  for (var oi = 0; oi < origTokens.length; oi++) {
+    origCharsStr += encodeToken(origTokens[oi]);
+  }
+
+  var revCharsStr = '';
+  for (var ri = 0; ri < revTokens.length; ri++) {
+    revCharsStr += encodeToken(revTokens[ri]);
   }
 
   var diffs = dmp.diff_main(origCharsStr, revCharsStr, false);
@@ -158,7 +122,7 @@ function wordLevelDiff(original, revised) {
     var encoded = diffs[d][1];
     var text = '';
     for (var c = 0; c < encoded.length; c++) {
-      var idx = encoded.charCodeAt(c) - 0xF900;
+      var idx = encoded.charCodeAt(c) - TOKEN_BASE;
       if (idx >= 0 && idx < allTokenArr.length) {
         text += allTokenArr[idx];
       }
