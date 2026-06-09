@@ -452,7 +452,7 @@ del {
 /* ============================================================
    Install Button (shown conditionally by JS)
    ============================================================ */
-#install-btn { font-size: 13px; height: 34px; min-height: 34px; padding: 0 12px; }
+#install-btn { font-size: 13px; min-height: 44px; padding: 0 12px; }
 
 /* ============================================================
    Responsive — Phone (≤640px)
