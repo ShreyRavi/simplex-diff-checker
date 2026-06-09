@@ -248,7 +248,7 @@ label {
 textarea {
   flex: 1;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   padding: 12px;
   border: 1.5px solid var(--color-border);
@@ -371,7 +371,7 @@ textarea:focus {
   min-height: var(--output-h);
   overflow-y: auto;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   background: var(--color-bg);
   color: var(--color-text);
@@ -452,7 +452,7 @@ del {
 /* ============================================================
    Install Button (shown conditionally by JS)
    ============================================================ */
-#install-btn { font-size: 13px; height: 34px; min-height: 34px; padding: 0 12px; }
+#install-btn { font-size: 13px; min-height: 44px; padding: 0 12px; }
 
 /* ============================================================
    Responsive — Phone (≤640px)
@@ -506,5 +506,16 @@ del {
 @media (min-width: 641px) and (max-width: 1024px) {
   .input-zone section {
     min-width: 280px;
+  }
+}
+
+/* ============================================================
+   Reduced Motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
