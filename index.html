@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simplex — Diff Checker</title>
+  <meta name="description" content="Privacy-first document diff. Paste two versions of text and see what changed — highlighted like Word's Track Changes. Runs entirely in your browser.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+
+  <!-- Fonts + Styles (self-hosted, no CDN) -->
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <span class="product-name">Simplex</span>
+    <div class="header-actions">
+      <button id="install-btn" class="btn btn-secondary" hidden aria-label="Install Simplex as an app">
+        Install App
+      </button>
+      <button
+        id="privacy-btn"
+        class="privacy-badge"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="privacy-popover"
+        title="Privacy information"
+      >
+        <span aria-hidden="true">🔒</span>
+        <span>In browser</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Privacy popover -->
+  <div
+    id="privacy-popover"
+    class="privacy-popover"
+    role="dialog"
+    aria-label="Privacy information"
+    aria-modal="true"
+    hidden
+  >
+    <div class="popover-header">
+      <strong>Runs entirely in your browser</strong>
+      <button class="popover-close" aria-label="Close privacy information">✕</button>
+    </div>
+    <p>No text leaves your tab. No server. No analytics. No cookies.</p>
+    <p><a href="https://github.com/ShreyRavi/simplex-diff-checker" target="_blank" rel="noopener noreferrer">View source on GitHub</a></p>
+  </div>
+
+  <main>
+    <div class="input-zone">
+      <section aria-label="Original text input">
+        <label for="original">Original</label>
+        <textarea
+          id="original"
+          placeholder="Paste original text here…"
+          spellcheck="false"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+        ></textarea>
+      </section>
+      <section aria-label="Revised text input">
+        <label for="revised">Revised</label>
+        <textarea
+          id="revised"
+          placeholder="Paste revised text here…"
+          spellcheck="false"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+        ></textarea>
+      </section>
+    </div>
+
+    <!-- Notices injected here by app.js -->
+    <div id="notice-zone" aria-live="polite" aria-atomic="false"></div>
+
+    <div class="action-bar">
+      <button id="copy-btn" class="btn btn-primary" disabled title="Cmd+Shift+C">
+        Copy as HTML
+      </button>
+      <button id="download-btn" class="btn btn-secondary" disabled>
+        Download .html
+      </button>
+    </div>
+
+    <div
+      role="region"
+      aria-label="Diff output"
+      aria-live="polite"
+      id="diff-output"
+      class="diff-output"
+    >
+      <div class="empty-state" id="empty-state">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="4" y="6" width="16" height="20" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="12" y="10" width="16" height="20" rx="2" fill="var(--color-bg)" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <p>Paste text in both boxes to see changes.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js').catch(function() {});
+      });
+    }
+  </script>
+</body>
+</html>
