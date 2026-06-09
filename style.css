@@ -1,0 +1,510 @@
+/* ============================================================
+   CSS Custom Properties — Light Mode
+   ============================================================ */
+:root {
+  --color-bg:                  #FAFAFA;
+  --color-text:                #1a1a1a;
+  --color-text-muted:          #6b7280;
+  --color-border:              #e5e7eb;
+  --color-border-focus:        #9ca3af;
+  --color-surface:             #FFFFFF;
+
+  --color-btn-fill:            #1a1a1a;
+  --color-btn-text:            #FFFFFF;
+  --color-btn-outline-border:  #1a1a1a;
+  --color-btn-outline-text:    #1a1a1a;
+  --color-btn-disabled:        rgba(26, 26, 26, 0.35);
+
+  --color-ins-text:            #1a7f37;
+  --color-ins-bg:              #d4f0d8;
+  --color-del-text:            #b91c1c;
+  --color-del-bg:              #fde8e8;
+
+  --color-notice-pua-border:   #d97706;
+  --color-notice-cap-border:   #ea580c;
+  --color-notice-bg:           #FFFFFF;
+
+  --font-mono:   'IBM Plex Mono', 'Menlo', 'Consolas', monospace;
+  --font-sans:   'IBM Plex Sans', 'system-ui', sans-serif;
+
+  --radius:      4px;
+  --gap:         16px;
+  --header-h:    52px;
+  --action-h:    52px;
+  --input-h:     40vh;
+  --output-h:    40vh;
+}
+
+/* ============================================================
+   Dark Mode
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:                  #0f172a;
+    --color-text:                #e2e8f0;
+    --color-text-muted:          #94a3b8;
+    --color-border:              #334155;
+    --color-border-focus:        #64748b;
+    --color-surface:             #1e293b;
+
+    --color-btn-fill:            #e2e8f0;
+    --color-btn-text:            #0f172a;
+    --color-btn-outline-border:  #e2e8f0;
+    --color-btn-outline-text:    #e2e8f0;
+    --color-btn-disabled:        rgba(226, 232, 240, 0.35);
+
+    --color-ins-text:            #4ade80;
+    --color-ins-bg:              #052e16;
+    --color-del-text:            #f87171;
+    --color-del-bg:              #450a0a;
+
+    --color-notice-pua-border:   #fbbf24;
+    --color-notice-cap-border:   #fb923c;
+    --color-notice-bg:           #1e293b;
+  }
+}
+
+/* ============================================================
+   Reset + Base
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  padding: 0 var(--gap);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.product-name {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ============================================================
+   Privacy Badge
+   ============================================================ */
+.privacy-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font: 12px/1 var(--font-sans);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  min-height: 32px;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.privacy-badge:hover,
+.privacy-badge:focus-visible {
+  border-color: var(--color-border-focus);
+  color: var(--color-text);
+  outline: none;
+}
+
+.privacy-badge:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-btn-fill);
+}
+
+/* ============================================================
+   Privacy Popover
+   ============================================================ */
+.privacy-popover {
+  position: absolute;
+  top: calc(var(--header-h) - 4px);
+  right: var(--gap);
+  z-index: 100;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 14px;
+  max-width: 280px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.privacy-popover[hidden] { display: none; }
+
+.popover-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.popover-header strong {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.popover-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 2px;
+  min-width: 20px;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popover-close:hover { color: var(--color-text); }
+
+.privacy-popover p {
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.privacy-popover a {
+  color: var(--color-btn-fill);
+  text-decoration: none;
+}
+
+.privacy-popover a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Main Layout
+   ============================================================ */
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--gap);
+  gap: var(--gap);
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+
+/* ============================================================
+   Input Zone
+   ============================================================ */
+.input-zone {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+  height: var(--input-h);
+  min-height: 160px;
+}
+
+.input-zone section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+textarea {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  resize: none;
+  transition: border-color 0.15s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+}
+
+/* ============================================================
+   Notices
+   ============================================================ */
+.notice-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-left: 3px solid var(--accent);
+  background: var(--color-notice-bg);
+  padding: 10px 14px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13px;
+  border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.notice-pua  { --accent: var(--color-notice-pua-border); }
+.notice-cap  { --accent: var(--color-notice-cap-border); }
+
+.notice-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  padding: 4px 6px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.notice-dismiss:hover { color: var(--color-text); }
+
+/* ============================================================
+   Action Bar
+   ============================================================ */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: var(--action-h);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 16px;
+  height: 40px;
+  min-height: 44px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--color-btn-fill);
+  color: var(--color-btn-text);
+  border: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-btn-outline-text);
+  border: 1.5px solid var(--color-btn-outline-border);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn:not(:disabled):hover { opacity: 0.85; }
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-btn-fill);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Diff Output
+   ============================================================ */
+.diff-output {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-height: var(--output-h);
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  background: var(--color-bg);
+  color: var(--color-text);
+  content-visibility: auto;
+}
+
+ins {
+  text-decoration: underline;
+  color: var(--color-ins-text);
+  background: var(--color-ins-bg);
+  padding: 0 2px;
+  border-radius: 2px;
+  font-style: normal;
+}
+
+del {
+  text-decoration: line-through;
+  color: var(--color-del-text);
+  background: var(--color-del-bg);
+  padding: 0 2px;
+  border-radius: 2px;
+  font-style: normal;
+}
+
+/* ============================================================
+   Empty State
+   ============================================================ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+  min-height: calc(var(--output-h) - 32px);
+  color: var(--color-border);
+  text-align: center;
+}
+
+.empty-state p {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
+   Loading State
+   ============================================================ */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+  min-height: calc(var(--output-h) - 32px);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
+   Install Button (shown conditionally by JS)
+   ============================================================ */
+#install-btn { font-size: 13px; height: 34px; min-height: 34px; padding: 0 12px; }
+
+/* ============================================================
+   Responsive — Phone (≤640px)
+   ============================================================ */
+@media (max-width: 640px) {
+  :root {
+    --input-h: 30vh;
+    --output-h: 50vh;
+    --gap: 12px;
+  }
+
+  .input-zone {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .input-zone section {
+    height: var(--input-h);
+  }
+
+  .action-bar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 4px 0;
+  }
+
+  .action-bar .btn {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  /* Stack buttons on very narrow screens */
+  @media (max-width: 360px) {
+    .action-bar { flex-direction: column; }
+    .action-bar .btn { width: 100%; }
+  }
+
+  header { padding: 0 12px; }
+
+  #install-btn { display: none !important; }
+
+  .privacy-popover {
+    right: 12px;
+    max-width: calc(100vw - 24px);
+  }
+}
+
+/* ============================================================
+   Tablet (641–1024px)
+   ============================================================ */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .input-zone section {
+    min-width: 280px;
+  }
+}

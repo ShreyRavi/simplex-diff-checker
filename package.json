@@ -1,0 +1,20 @@
+{
+  "name": "simplex-diff-checker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "serve": "python3 -m http.server 8080"
+  },
+  "devDependencies": {
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/ibm-plex-sans": "^5.2.8",
+    "@playwright/test": "^1.44.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "diff-match-patch": "^1.0.5",
+    "jsdom": "^24.1.0",
+    "vitest": "^2.0.0"
+  }
+}
