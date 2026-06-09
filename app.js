@@ -7,7 +7,6 @@
   var originalTA  = document.getElementById('original');
   var revisedTA   = document.getElementById('revised');
   var diffOutput  = document.getElementById('diff-output');
-  var emptyState  = document.getElementById('empty-state');
   var copyBtn     = document.getElementById('copy-btn');
   var downloadBtn = document.getElementById('download-btn');
   var noticeZone  = document.getElementById('notice-zone');
@@ -17,13 +16,9 @@
 
   // ── State ─────────────────────────────────────────────────────────────────
   var currentHTML    = '';
-  var workerReady    = false;
   var worker         = null;
   var pendingSeqId   = 0;       // last seq ID sent to worker
-  var activeSeqId    = 0;       // seq ID of the result we last rendered
   var workerFailed   = false;   // true if Worker constructor threw
-  var noticePUA      = false;
-  var noticeCap      = false;
   var deferredPrompt = null;    // beforeinstallprompt event
 
   // ── Worker init (eager — on DOMContentLoaded) ─────────────────────────────
@@ -34,8 +29,6 @@
       worker.onmessage = function (e) {
         var data = e.data;
         if (data.id !== pendingSeqId) return; // stale — discard
-        activeSeqId = data.id;
-        hideLoading();
         if (data.error) {
           renderError(data.error);
         } else {
@@ -45,10 +38,8 @@
       worker.onerror = function () {
         workerFailed = true;
         worker = null;
-        // Fall back to sync diff with current inputs
         runSyncDiff(originalTA.value, revisedTA.value);
       };
-      workerReady = true;
     } catch (e) {
       workerFailed = true;
       worker = null;
@@ -101,15 +92,27 @@
     renderResult(result.html, result.puaStripped, result.capped);
   }
 
-  var syncEngineLoaded = false;
+  var syncEngineLoaded  = false;
+  var syncEngineLoading = false;
+  var syncLoadQueue     = null;
+
   function loadSyncEngine(cb) {
     if (syncEngineLoaded) { cb(); return; }
+    syncLoadQueue = cb; // always keep latest
+    if (syncEngineLoading) return;
+    syncEngineLoading = true;
     var s1 = document.createElement('script');
     s1.src = 'lib/diff_match_patch.js';
     s1.onload = function () {
       var s2 = document.createElement('script');
       s2.src = 'diff.js';
-      s2.onload = function () { syncEngineLoaded = true; cb(); };
+      s2.onload = function () {
+        syncEngineLoaded  = true;
+        syncEngineLoading = false;
+        var pending = syncLoadQueue;
+        syncLoadQueue = null;
+        pending();
+      };
       document.head.appendChild(s2);
     };
     document.head.appendChild(s1);
@@ -146,10 +149,6 @@
     updateButtons(false);
   }
 
-  function hideLoading() {
-    // Content will be replaced by renderResult
-  }
-
   function renderError(msg) {
     diffOutput.textContent = 'Error: ' + msg;
     updateButtons(false);
@@ -159,7 +158,9 @@
     clearNotices();
 
     if (capped) {
-      clearResult();
+      currentHTML = '';
+      diffOutput.innerHTML = '';
+      updateButtons(false);
       showNotice('cap', 'Input exceeds 200,000 characters — diff suppressed to prevent browser slowdown. Shorten your text to compare.');
       return;
     }

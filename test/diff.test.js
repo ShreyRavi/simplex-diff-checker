@@ -58,6 +58,10 @@ describe('normalizeText', () => {
   it('leaves plain ASCII unchanged', () => {
     expect(normalizeText('hello world')).toBe('hello world');
   });
+
+  it('empty string → empty string', () => {
+    expect(normalizeText('')).toBe('');
+  });
 });
 
 // ── PUA handling ──────────────────────────────────────────────────────────
@@ -160,6 +164,10 @@ describe('wordLevelDiff', () => {
 // ── sentenceBoundaryMerge ─────────────────────────────────────────────────
 
 describe('sentenceBoundaryMerge', () => {
+  it('null → returns null (early-return guard)', () => {
+    expect(sentenceBoundaryMerge(null)).toBeNull();
+  });
+
   it('empty array → empty array', () => {
     expect(sentenceBoundaryMerge([])).toEqual([]);
   });
@@ -181,6 +189,10 @@ describe('sentenceBoundaryMerge', () => {
 // ── opsToHTML ─────────────────────────────────────────────────────────────
 
 describe('opsToHTML', () => {
+  it('empty array → empty string', () => {
+    expect(opsToHTML([])).toBe('');
+  });
+
   it('EQUAL op → plain text', () => {
     expect(opsToHTML([[DIFF_EQUAL, 'hello']])).toBe('hello');
   });
@@ -197,6 +209,10 @@ describe('opsToHTML', () => {
     const html = opsToHTML([[DIFF_EQUAL, '<script>']]);
     expect(html).not.toContain('<script>');
     expect(html).toContain('&lt;script&gt;');
+  });
+
+  it('escapes & in content', () => {
+    expect(opsToHTML([[DIFF_EQUAL, 'a & b']])).toBe('a &amp; b');
   });
 });
 

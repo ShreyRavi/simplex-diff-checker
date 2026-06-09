@@ -44,7 +44,8 @@ test('identical text → no ins/del markup', async ({ page }) => {
   await page.fill('#original', 'The quick brown fox');
   await page.fill('#revised', 'The quick brown fox');
 
-  await page.waitForTimeout(300); // allow debounce
+  // Wait for diff to complete: copy button enables when renderResult fires
+  await expect(page.locator('#copy-btn')).toBeEnabled({ timeout: 3000 });
 
   const insCount = await page.locator('#diff-output ins').count();
   const delCount = await page.locator('#diff-output del').count();

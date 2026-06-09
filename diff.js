@@ -40,19 +40,6 @@ function normalizeText(text) {
     .replace(/…/g, '...');
 }
 
-// Abbreviations that contain internal periods and should not trigger sentence splits.
-// Two-pass: first protect, then split, then restore.
-var ABBREV_RE = /\b(Dr|Mr|Mrs|Ms|Prof|Sr|Jr|Inc|Ltd|Corp|Co|vs|etc|approx|est|Fig|vol|pp|ch|No|Dept|Univ|Assoc|Mgr|Asst|Bros|Blvd|Ave|St|Rd|Apt|e\.g|i\.e|cf|et al|U\.S\.A|U\.S|U\.K|P\.O)\./gi;
-var ABBREV_PLACEHOLDER = '\x00ABB\x00';
-
-function protectAbbreviations(text) {
-  return text.replace(ABBREV_RE, function(m) { return m.slice(0, -1) + '\x00DOT\x00'; });
-}
-
-function restoreAbbreviations(text) {
-  return text.replace(/\x00DOT\x00/g, '.');
-}
-
 // Split text into tokens: words + whitespace/punctuation as separate tokens.
 // emoji and CJK characters are treated as individual tokens.
 function tokenize(text) {
