@@ -8,7 +8,7 @@ Paste two versions of a document. See what changed, highlighted like Word's Trac
 
 ## Privacy Verification
 
-No data leaves your browser. Verify yourself:
+NO data leaves your browser. Verify yourself:
 
 1. Open the app: https://shreyravi.github.io/simplex-diff-checker/
 2. Open DevTools → Network tab
