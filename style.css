@@ -248,7 +248,7 @@ label {
 textarea {
   flex: 1;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   padding: 12px;
   border: 1.5px solid var(--color-border);
@@ -371,7 +371,7 @@ textarea:focus {
   min-height: var(--output-h);
   overflow-y: auto;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   background: var(--color-bg);
   color: var(--color-text);
